@@ -1,0 +1,54 @@
+/*
+Brandy Wingfield
+Professor Cetinkaya
+CS 3622
+Project: Reverse Echo Server
+*/
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+// This recursive method prints the clients message in reverse
+public class Reverse_Echo_Server {
+    public static String reverseMessage (String message){
+        if(message.length() <= 1){
+            return message;
+        }
+        else return reverseMessage(message.substring(1)) + message.charAt(0);
+    }
+
+    public static void main(String[] args) throws IOException {
+        System.out.println("[Client Connected]\n");
+        ServerSocket myServer = new ServerSocket(5001); // Creating a server socket
+
+            try {
+                Socket mySocket = myServer.accept(); // Creating a socket in which the server will accept
+
+                InputStreamReader input = new InputStreamReader(mySocket.getInputStream()); // Opening Input Stream Reader
+                PrintWriter output = new PrintWriter(mySocket.getOutputStream()); // Opening Output Print Writer
+                BufferedReader reader = new BufferedReader(input); // Opening Buffered Reader
+                BufferedWriter writer = new BufferedWriter(output); // Opening Buffered Writer
+
+                while(true) {
+                    String message = reader.readLine(); // Scanning message from the Client
+                    System.out.println("Client Message: " + message); // Printing Client Message
+
+                    writer.write(reverseMessage(message)); // Server sends client's message in reverse back to Client
+                    writer.newLine(); // Creating new line in buffer
+                    writer.flush(); // Flushing the Buffer so it will not get full
+
+                    if (message.equalsIgnoreCase("end")) {
+                        break;
+                    }
+                }
+                    mySocket.close(); // Closing the Socket
+                    writer.close(); // Closing the Buffered Writer;
+                    reader.close(); // Closing the Buffered Reader
+                    input.close(); // Closing the Input Stream
+                    output.close(); // Closing the Print Writer
+
+            }catch (IOException E){
+                E.printStackTrace(); // Catch Exception Block
+            }
+        }
+    }
+
