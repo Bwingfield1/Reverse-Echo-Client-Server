@@ -1,0 +1,43 @@
+/*
+Brandy Wingfield
+Professor Cetinkaya
+CS 3622
+Project: Echo Client
+*/
+import java.io.*;
+import java.net.Socket;
+import java.util.Scanner;
+public class Echo_Client {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("[Server Connected]\n");
+        try {
+           Socket mySocket = new Socket("localhost", 5001); // Creating socket to connect to the server
+           InputStreamReader input = new InputStreamReader(mySocket.getInputStream()); // Opening Input Stream Reader
+           PrintWriter output = new PrintWriter(mySocket.getOutputStream()); // Opening Output Print Writer
+           BufferedReader reader = new BufferedReader(input); // Opening Buffered Reader
+           BufferedWriter writer = new BufferedWriter(output); // Opening Buffered Writer
+
+            while (true){
+                System.out.print("Message: ");
+                String myMessage = sc.nextLine(); // Client types message
+                writer.write(myMessage); //Client's message is sent to the server
+                writer.newLine(); // Creating new line in buffer
+                writer.flush(); // Flushing the Buffer so it will not get full
+                String receivedMessage = reader.readLine(); // Server sends message back to client
+                System.out.println("Server Message: " + receivedMessage); // Printing server's message
+
+                if (myMessage.equalsIgnoreCase("end")){
+                    break;
+                }
+            }
+            mySocket.close(); // Closing the Socket
+            writer.close(); // Closing the Buffered Writer
+            reader.close(); // Closing the Buffered Reader
+            input.close(); // Closing the Input Stream
+            output.close(); // Closing the Print Writer
+        }catch (Exception E){
+            E.printStackTrace(); // Catch Exception Block
+        }
+    }
+}
